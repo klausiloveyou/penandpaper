@@ -1,0 +1,37 @@
+# ./dev.yml
+#
+# Desc:   YAML file to describe development environment with docker-compose
+# Usage:  docker-compose -f dev.yml up -d
+
+version: "3"
+
+services:
+  db:
+    image: mongo:4.0.5-xenial
+    container_name: pnp_dev_mongo
+    environment:
+      MONGO_DATA_DIR: /data/db
+      MONGO_LOG_DIR: /data/log
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: devsecret
+    volumes:
+      - ./docker/mongo/data/db/:/data/db/
+      - ./docker/mongo/data/log/:/data/log/
+      - ./docker/mongo/files/:/data/seeds/
+    ports:
+      - "27017:27017"
+  web:
+    build: ./docker/php/
+    container_name: pnp_dev_web
+    depends_on:
+      - db
+    volumes:
+      - ./src/:/var/www/html/
+      - /var/www/html/config/
+      - ./src/config/mongodb_dev.php:/var/www/html/config/mongodb.php
+    ports:
+      - "8100:80"
+    stdin_open: true
+    tty: true
+    links:
+      - db:pnpdevdb

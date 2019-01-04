@@ -1,22 +1,36 @@
 <?php
-require_once "source/db/auth.php";
-require_once "source/ui/forms.php";
-require_once "config/mongodb.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/db/auth.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/db/util.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."/config/mongodb.php";
 
-$error = "";
+session_start();
+$error = [];
 
-if (isset($_POST["pw"]) && isset($_POST["user"])) {
+if (isset($_SESSION["user_id"])) {
+    header("Location: pages/characters.php");
+    exit();
+}
 
-    $p = $_POST["pw"];
-    $u = trim($_POST["user"]);
+if (!empty($_POST)) {
+    if (isset($_POST["pw"]) && isset($_POST["user"])) {
 
-    if (strlen($p) == 0 || strlen($u) == 0) {
-        $error = "Provide a user name and password!";
-    } else {
-        $error = loginUser($u, $p);
+        $p = $_POST["pw"];
+        $u = trim($_POST["user"]);
+
+        if (strlen($p) == 0 || strlen($u) == 0) {
+            $error = [false, "user"];
+        } else {
+            $login = loginUser($u, $p);
+            if ($login[0]) {
+                $_SESSION["user_id"] = $login[1];
+                $_SESSION["temp_pw"] = hasTempPassword($login[1]);
+                header("Location: pages/characters.php");
+                exit();
+            } else {
+                $error = $login;
+            }
+        }
     }
-} else {
-    #do_on_load_stuff
 }
 ?>
 <!doctype html>
@@ -25,7 +39,7 @@ if (isset($_POST["pw"]) && isset($_POST["user"])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Pen & Paper">
-    <meta name="author" content="da_fuchs">
+    <meta name="author" content="klausiloveyou">
     <link rel="icon" href="dist/img/favicon.ico">
 
     <title>Pen & Paper - Login</title>
@@ -35,28 +49,32 @@ if (isset($_POST["pw"]) && isset($_POST["user"])) {
 
     <!-- Custom styles for this template -->
     <link href="dist/css/pnp.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <!-- <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
 </head>
 
-<body class="text-center" background="dist/img/paper.jpg">
+<body class="login">
+
 <form class="form-signin" method="post">
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <!-- DEFAULT DEV USER: admin -->
-    <label for="inputEmail" class="sr-only">User name</label>
-    <input name="user" type="text" id="inputEmail" class="form-control" placeholder="User name" required autofocus>
-    <!-- DEFAULT DEV PW: secret -->
-    <label for="inputPassword" class="sr-only">Password</label>
-    <input name="pw" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    <div class="form-label-group">
+        <input type="text" name="user" id="inputName" class="form-control<?php if (!$error[0] && $error[1] === "user") {echo " is-invalid";} ?>" placeholder="User name" required autofocus>
+        <label for="inputName">User Name</label>
+        <div class="invalid-feedback">
+            User name doesn't exist!
+        </div>
+    </div>
+
+    <div class="form-label-group">
+        <input type="password" name="pw" id="inputPassword" class="form-control<?php if (!$error[0] && $error[1] === "pw") {echo " is-invalid";} ?>" placeholder="Password" required>
+        <label for="inputPassword">Password</label>
+        <div class="invalid-feedback">
+            Wrong password!
+        </div>
+    </div>
+
+    <button class="btn btn-lg btn-primary btn-block" id="sign-in" type="submit">Sign in</button>
 </form>
 
 <!-- jQuery -->
 <script src="vendor/jquery/jquery-3.3.1.min.js"></script>
-
-<!-- Bootstrap Core JavaScript -->
-<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 
 <!-- Bootstrap Bundle JavaScript -->
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

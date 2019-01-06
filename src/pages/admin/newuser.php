@@ -5,24 +5,63 @@
  * Date: 2019-01-04
  * Time: 15:53
  */
-require_once $_SERVER["DOCUMENT_ROOT"]."/source/db/util.php";
+
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/ui/forms.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/User.class.php";
 
 session_start();
 
-if (!isset($_SESSION["user_id"])) {
+if (!isset($_SESSION["user"])) {
     session_destroy();
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit();
-} else if ($_SESSION["temp_pw"]) {
-    header("Location: changepw.php");
-    exit();
-} else if (!isAdmin($_SESSION["user_id"])) {
-    header("Location: characters.php");
-    exit();
-} else {
-    //TODO: Insert logic here
 }
 
+/** @var User $user */
+$user = $_SESSION["user"];
+
+if ($user->getPwd()->temp) {
+    header("Location: ../changepw.php");
+    exit();
+}
+
+if ($user->getRole() !== "admin") {
+    header("Location: ../characters.php");
+    exit();
+}
+
+$field = "";
+$feedback = "";
+$vi = false;
+
+if (!empty($_POST)) {
+    if (isset($_POST["name"]) && isset($_POST["new"]) && isset($_POST["conf"])) {
+        $new = $_POST["new"];
+        $conf = $_POST["conf"];
+        $name = trim($_POST["name"]);
+        try {
+            $vi = validPasswordInput($new, $conf);
+        } catch (Exception $e) {
+            $field = "pw";
+            $feedback = $e->getMessage();
+        }
+        if ($vi) {
+            if (strlen($name) < 3) {
+                $field = "name";
+                $feedback = "User name must be 3 characters at least.";
+            } else {
+                try {
+                    $user::create($name, $new);
+                    header("Location: ../characters.php");
+                    exit();
+                } catch (Exception $e) {
+                    $field = "name";
+                    $feedback = $e->getMessage();
+                }
+            }
+        }
+    }
+}
 
 ?>
 <!doctype html>
@@ -45,13 +84,41 @@ if (!isset($_SESSION["user_id"])) {
 
 <body class="main">
 
-<?php include "../includes/nav.php"; ?>
+<?php include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/nav.php"; ?>
 
 <main role="main" class="container">
 
     <div class="starter-template">
-        <h1>User Form here</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+        <h1>Create new user</h1>
+        <form class="form-signin" method="post">
+            <div class="form-label-group">
+                <input type="text" name="name" id="inputName" class="form-control<?php if ($field === "name") {echo " is-invalid";} ?>" placeholder="User name" required autofocus>
+                <label for="inputName">User name</label>
+                <div class="invalid-feedback">
+                    <?php echo $feedback; ?>
+                </div>
+            </div>
+
+            <hr class="mb-4">
+
+            <div class="form-label-group">
+                <input type="password" name="new" id="inputNewPassword" class="form-control<?php if ($field === "pw") {echo " is-invalid";} ?>" placeholder="Enter new password" required>
+                <label for="inputNewPassword">Enter temporary password</label>
+                <div class="invalid-feedback">
+                    <?php echo $feedback; ?>
+                </div>
+            </div>
+
+            <div class="form-label-group">
+                <input type="password" name="conf" id="inputConfPassword" class="form-control<?php if ($field === "pw") {echo " is-invalid";} ?>" placeholder="Confirm new password" required>
+                <label for="inputConfPassword">Confirm temporary password</label>
+                <div class="invalid-feedback">
+                    <?php echo $feedback; ?>
+                </div>
+            </div>
+
+            <button class="btn btn-lg btn-primary btn-block" id="sign-in" type="submit">Create</button>
+        </form>
     </div>
 
 </main>

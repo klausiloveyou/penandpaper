@@ -1,33 +1,27 @@
 <?php
-require_once $_SERVER["DOCUMENT_ROOT"]."/source/db/auth.php";
-require_once $_SERVER["DOCUMENT_ROOT"]."/source/db/util.php";
-require_once $_SERVER["DOCUMENT_ROOT"]."/config/mongodb.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/User.class.php";
 
 session_start();
-$error = [];
+$error = "";
 
-if (isset($_SESSION["user_id"])) {
+if (isset($_SESSION["user"])) {
     header("Location: pages/characters.php");
     exit();
 }
 
 if (!empty($_POST)) {
     if (isset($_POST["pw"]) && isset($_POST["user"])) {
-
         $p = $_POST["pw"];
         $u = trim($_POST["user"]);
-
-        if (strlen($p) == 0 || strlen($u) == 0) {
-            $error = [false, "user"];
+        if (strlen($p) === 0 || strlen($u) === 0) {
+            $error = "user";
         } else {
-            $login = loginUser($u, $p);
-            if ($login[0]) {
-                $_SESSION["user_id"] = $login[1];
-                $_SESSION["temp_pw"] = hasTempPassword($login[1]);
+            try {
+                $_SESSION["user"] = User::login($u, $p);
                 header("Location: pages/characters.php");
                 exit();
-            } else {
-                $error = $login;
+            } catch (Exception $e) {
+                $error = $e->getMessage();
             }
         }
     }
@@ -55,7 +49,7 @@ if (!empty($_POST)) {
 
 <form class="form-signin" method="post">
     <div class="form-label-group">
-        <input type="text" name="user" id="inputName" class="form-control<?php if (!$error[0] && $error[1] === "user") {echo " is-invalid";} ?>" placeholder="User name" required autofocus>
+        <input type="text" name="user" id="inputName" class="form-control<?php if ($error === "user") {echo " is-invalid";} ?>" placeholder="User name" required autofocus>
         <label for="inputName">User Name</label>
         <div class="invalid-feedback">
             User name doesn't exist!
@@ -63,7 +57,7 @@ if (!empty($_POST)) {
     </div>
 
     <div class="form-label-group">
-        <input type="password" name="pw" id="inputPassword" class="form-control<?php if (!$error[0] && $error[1] === "pw") {echo " is-invalid";} ?>" placeholder="Password" required>
+        <input type="password" name="pw" id="inputPassword" class="form-control<?php if ($error=== "pw") {echo " is-invalid";} ?>" placeholder="Password" required>
         <label for="inputPassword">Password</label>
         <div class="invalid-feedback">
             Wrong password!

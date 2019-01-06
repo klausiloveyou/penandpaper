@@ -6,58 +6,36 @@
 require_once $_SERVER["DOCUMENT_ROOT"]."/config/mongodb.php";
 
 /**
- * @param string $id The object ID of the user document
- * @return string|null The name of the user
+ * @param string $namespace
+ * @param array $query
+ * @param array $options
+ * @return array|null
+ * @throws Exception
  */
-function getUserNameByID($id) {
+function queryDocument($namespace, $query, $options = [ "limit" => 1 ])
+{
     global $manager;
-
     try {
-        $query = new MongoDB\Driver\Query([ "_id" => new MongoDB\BSON\ObjectId($id) ]);
-        $cursor = $manager -> executeQuery("pnp.user", $query);
-        $result = $cursor -> toArray();
-        $name = $result[0] -> name;
+        $q = new MongoDB\Driver\Query($query, $options);
+        $c = $manager->executeQuery($namespace, $q);
+        $r = $c->toArray();
     } catch (\MongoDB\Driver\Exception\Exception $e) {
-        return null;
+        throw new Exception($e->getMessage());
     }
-
-    return $name;
+    return (count($r) > 0) ? $r : null;
 }
 
 /**
- * @param string $id The object ID of the user document
- * @return bool|null Is admin or not
+ * @param string $namespace
+ * @param MongoDB\Driver\BulkWrite $bulk
+ * @throws Exception
  */
-function isAdmin($id) {
+function bulkWriteOperation($namespace, $bulk)
+{
     global $manager;
-
     try {
-        $query = new MongoDB\Driver\Query([ "_id" => new MongoDB\BSON\ObjectId($id) ]);
-        $cursor = $manager -> executeQuery("pnp.user", $query);
-        $result = $cursor -> toArray();
-        $admin = ($result[0] -> role == "admin") ? true : false;
-    } catch (\MongoDB\Driver\Exception\Exception $e) {
-        return null;
+        $manager->executeBulkWrite($namespace, $bulk);
+    } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
+        throw new Exception($e->getMessage());
     }
-
-    return $admin;
-}
-
-/**
- * @param string $id The object ID of the user document
- * @return bool|null Has a temporary password or self set
- */
-function hasTempPassword($id) {
-    global $manager;
-
-    try {
-        $query = new MongoDB\Driver\Query([ "_id" => new MongoDB\BSON\ObjectId($id) ]);
-        $cursor = $manager -> executeQuery("pnp.user", $query);
-        $result = $cursor -> toArray();
-        $temp = (bool) $result[0] -> pwd -> temp;
-    } catch (\MongoDB\Driver\Exception\Exception $e) {
-        return null;
-    }
-
-    return $temp;
 }

@@ -1,19 +1,23 @@
 <?php
-require_once $_SERVER["DOCUMENT_ROOT"]."/source/db/util.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/User.class.php";
 
 session_start();
 
-if (!isset($_SESSION["user_id"])) {
+if (!isset($_SESSION["user"])) {
     session_destroy();
     header("Location: ../index.php");
     exit();
-} else if ($_SESSION["temp_pw"]) {
-    header("Location: changepw.php");
-    exit();
-} else {
-    //TODO: Insert logic here
 }
 
+/** @var User $user */
+$user = $_SESSION["user"];
+
+if ($user->getPwd()->temp) {
+    header("Location: changepw.php");
+    exit();
+}
+
+$lastUsed = $user->getLastUsed();
 ?>
 <!doctype html>
 <html lang="en">
@@ -35,15 +39,10 @@ if (!isset($_SESSION["user_id"])) {
 
 <body class="main">
 
-<?php include "includes/nav.php"; ?>
+<?php include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/nav.php"; ?>
 
 <main role="main" class="container">
-
-    <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-    </div>
-
+    <?php include (is_null($lastUsed)) ? $_SERVER["DOCUMENT_ROOT"]."/pages/includes/nocharactermain.php" : $_SERVER["DOCUMENT_ROOT"]."/pages/includes/charactermain.php"; ?>
 </main>
 
 <!-- jQuery -->

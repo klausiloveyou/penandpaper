@@ -5,36 +5,42 @@
  * Date: 2019-01-04
  * Time: 15:53
  */
-require_once $_SERVER["DOCUMENT_ROOT"]."/source/db/auth.php";
 require_once $_SERVER["DOCUMENT_ROOT"]."/source/ui/forms.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/User.class.php";
 
 session_start();
 
-if (!isset($_SESSION["user_id"])) {
+if (!isset($_SESSION["user"])) {
     session_destroy();
     header("Location: ../index.php");
     exit();
 }
 
-$temp = $_SESSION["temp_pw"];
+/** @var User $user */
+$user = $_SESSION["user"];
+
 $field = "";
 $feedback = "";
+$vi = false;
+$temp = $user->getPwd()->temp;
 
 if (!empty($_POST)) {
     if (isset($_POST["old"]) && isset($_POST["new"]) && isset($_POST["conf"])) {
-        $vi = validPasswordInput($_POST["new"], $_POST["conf"]);
-        if (!$vi[0]) {
+        try {
+            $vi = validPasswordInput($_POST["new"], $_POST["conf"]);
+        } catch (Exception $e) {
             $field = "new";
-            $feedback = $vi[1];
-        } else {
-            $change = changePassword($_SESSION["user_id"], $_POST["old"], $_POST["new"]);
-            if ($change[0]) {
+            $feedback = $e->getMessage();
+        }
+        if ($vi) {
+            try {
+                $user->changePassword($_POST["old"], $_POST["new"]);
                 session_destroy();
                 header("Location: ../index.php");
                 exit();
-            } else {
+            } catch (Exception $e) {
                 $field = "old";
-                $feedback = $change[1];
+                $feedback = $e->getMessage();
             }
         }
     }
@@ -61,7 +67,7 @@ if (!empty($_POST)) {
 
 <body class="main">
 
-<?php if (!$temp) { include "includes/nav.php"; } ?>
+<?php if (!$temp) { include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/nav.php"; } ?>
 
 <main role="main" class="container">
 

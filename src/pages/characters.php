@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author  Felix Reinhardt <klausiloveyou@gmail.com>
+ */
+
 require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/User.class.php";
 
 session_start();

@@ -1,9 +1,6 @@
 <?php
 /**
- * Created by IntelliJ IDEA.
- * User: felix.reinhardt
- * Date: 2019-01-04
- * Time: 15:53
+ * @author  Felix Reinhardt <klausiloveyou@gmail.com>
  */
 
 require_once $_SERVER["DOCUMENT_ROOT"]."/source/ui/forms.php";

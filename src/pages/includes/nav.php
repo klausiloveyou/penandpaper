@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author  Felix Reinhardt <klausiloveyou@gmail.com>
+ */
+
 /** @var User $user */
 $user = $_SESSION["user"];
 $lastUsed = $user->getLastUsed();
@@ -30,15 +34,10 @@ $lastUsed = $user->getLastUsed();
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo strtoupper($user->getName()); ?></a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
-                    <?php if ($user->getRole() === "admin") {include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/admindropdownitems.php";} ?>
+                    <?php include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/admindropdownitems.php"; ?>
                     <a class="dropdown-item" href="#">New Character...</a>
                     <div class="dropdown-divider"></div>
-
-                    <!-- Loop through Characters (if more than 1) -->
-<!--                    <h6 class="dropdown-header">Change Character:</h6>-->
-<!--                    <a class="dropdown-item" href="#">Torendil</a>-->
-<!--                    <div class="dropdown-divider"></div>-->
-
+                    <?php include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/chardropdownitems.php"; ?>
                     <a class="dropdown-item" href="/pages/changepw.php">Change Password</a>
                     <a class="dropdown-item" href="/pages/util/logout.php">Logout</a>
                 </div>

@@ -1,55 +1,88 @@
 <?php
 /**
- * Created by IntelliJ IDEA.
- * User: felix.reinhardt
- * Date: 2019-01-05
- * Time: 14:42
+ * Util methods for DB operations
+ *
+ * @author  Felix Reinhardt <klausiloveyou@gmail.com>
  */
-require_once $_SERVER["DOCUMENT_ROOT"]."/source/db/util.php";
 
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/db/util.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/Character.class.php";
+
+/**
+ * Class handles user data fetched from and stored in the MongoDB for a single document.
+ *
+ * MongoDB db.user document:
+ *
+ *  {
+ *      "_id": "objectId",
+ *      "name": "string",
+ *      "pwd": {
+ *          "hash": "string",
+ *          "temp": "bool"
+ *      },
+ *      "role": "string",
+ *      "lastUsed": "objectId"
+ *  }
+ *
+ */
 class User
 {
+    const DBNAMESPACE = DB_DB.".user";
+
+    /** @var MongoDB\BSON\ObjectId $id */
     private $id;
+    /** @var string $name */
     private $name;
+    /** @var stdClass $pwd */
     private $pwd;
+    /** @var Character $lastUsed */
     private $lastUsed;
+    /** @var string $role */
     private $role;
-    private $charIDs;
+    /** @var MongoDB\BSON\ObjectId[] $charObjectIDs */
+    private $charObjectIDs;
 
     /**
-     * User constructor.
-     * @param $user
-     * @throws Exception
+     * User constructor. Use User::login() in order to create a new instance.
+     *
+     * @param stdClass $user
+     * @see User::login()
+     * @access private
      */
     private function __construct($user)
     {
-        $this->id = (string) $user->_id;
+        $this->id = $user->_id;
         $this->name = $user->name;
         $this->pwd = $user->pwd;
         $this->role = $user->role;
         try {
-            $this->lastUsed = (is_null($user->lastUsed)) ? null : new Character((string) $user->lastUsed);
+            $this->lastUsed = (is_null($user->lastUsed)) ? null : new Character($user->lastUsed);
         } catch (Exception $e) {
             $this->lastUsed = null;
         }
         try {
-            $this->refreshCharIDs();
+            $this->refreshCharObjectIDs();
         } catch (Exception $e) {
-            $this->charIDs = null;
+            $this->charObjectIDs = null;
         }
     }
 
     /**
+     * Method to verify login data for a user and return a new instance or return an exception.
+     * Only method to create a new User instance by calling the private constructor.
+     *
      * @param string $name
      * @param string $pw
      * @return User
-     * @throws Exception
+     * @throws Exception if user or password checks failed
+     * @access public
+     * @static
      */
     public static function login($name, $pw)
     {
         $query = ['name' => new MongoDB\BSON\Regex("^".$name."$", "i")];
         try {
-            $result = queryDocument("pnp.user", $query);
+            $result = queryDocument(self::DBNAMESPACE, $query);
         } catch (Exception $e) {
             throw new Exception("user");
         }
@@ -65,10 +98,14 @@ class User
     }
 
     /**
+     * Method in order to create a new user within the db.user collection (persistent).
+     * Does not return a new User instance but trows an exception on error.
+     *
      * @param string $name
      * @param string $pw
-     * @return bool
      * @throws Exception
+     * @access public
+     * @static
      */
     public static function create($name, $pw)
     {
@@ -82,11 +119,8 @@ class User
                 'role' => 'user',
                 'lastUsed' => null
             ];
-            $bulk = new MongoDB\Driver\BulkWrite();
-            $bulk->insert($new_user);
             try {
-                bulkWriteOperation("pnp.user", $bulk);
-                return true;
+                bulkInsertOne(self::DBNAMESPACE, $new_user);
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());
             }
@@ -96,15 +130,20 @@ class User
     }
 
     /**
+     * Helper method in order to check if a user already exists with a given name.
+     * Could be also solved by using a unique index constraint at the MongoDB.
+     *
      * @param string $name The user name to check if it exists already
      * @return bool User name exists or not
      * @throws Exception
+     * @access public
+     * @static
      */
     public static function doesUserNameExist($name)
     {
         $query = ["name" => new MongoDB\BSON\Regex("^".$name."$", "i")];
         try {
-            $result = queryDocument("pnp.user", $query);
+            $result = queryDocument(self::DBNAMESPACE, $query);
             return (is_null($result)) ? false : true;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
@@ -112,9 +151,12 @@ class User
     }
 
     /**
+     * Method to set a new password if the current password was validated.
+     *
      * @param string $old
      * @param string $new
      * @throws Exception
+     * @access public
      */
     public function changePassword($old, $new)
     {
@@ -134,34 +176,59 @@ class User
     }
 
     /**
-     * @return array
+     * @param string $serialized_cid
+     * @return bool
      */
-    public function getCharIDs()
+    private function isCharacterFromUser($serialized_cid)
+    {
+        foreach ($this->getCharObjectIDs() as $cid) {
+            if ($cid->serialize() === $serialized_cid) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get method to return the private array which holds all character IDs belonging to the user:
+     * Referring to "_id": "objectID" for document in db.char
+     *
+     * Also refreshes the character IDs to ensure including newly created characters as well.
+     *
+     * @return MongoDB\BSON\ObjectId[]|null
+     * @access public
+     * @see User->refreshCharObjectIDs()
+     */
+    public function getCharObjectIDs()
     {
         try {
-            $this->refreshCharIDs();
+            $this->refreshCharObjectIDs();
         } catch (Exception $e) {
             error_log($e->getMessage());
         } finally {
-            return $this->charIDs;
+            return $this->charObjectIDs;
         }
     }
 
     /**
+     * Method to renew private array $charIDs which includes all associated characters.
+     * Also updates the User instance stored in the $_SESSION.
+     *
      * @throws Exception
+     * @access public
      */
-    public function refreshCharIDs()
+    public function refreshCharObjectIDs()
     {
-        $query = ['user' => new MongoDB\BSON\ObjectId($this->id)];
+        $query = ['user' => $this->id];
         $options = [];
         try {
-            $chars = queryDocument("pnp.char", $query, $options);
+            $chars = queryDocument(Character::DBNAMESPACE, $query, $options);
             if (is_null($chars)) {
-                $this->charIDs = null;
+                $this->charObjectIDs = null;
             } else {
-                $this->charIDs = [];
+                $this->charObjectIDs = [];
                 foreach ($chars as $c) {
-                    array_push($this->charIDs, (string) $c->_id);
+                    array_push($this->charObjectIDs, $c->_id);
                 }
             }
             $_SESSION["user"] = $this;
@@ -171,7 +238,10 @@ class User
     }
 
     /**
+     * Getter method to return private $role property.
+     *
      * @return string
+     * @access public
      */
     public function getRole()
     {
@@ -179,22 +249,42 @@ class User
     }
 
     /**
+     * Setter method to set private $role property.
+     *
      * @param string $role
+     * @throws Exception
+     * @access public
      */
     public function setRole($role)
     {
-        $this->role = $role;
+        $new_role = [
+            '$set' => [
+                'role' => $role
+            ]
+        ];
+        try {
+            bulkUpdateOneByID(self::DBNAMESPACE, $this->id, $new_role);
+            $this->role = $role;
+            $_SESSION["user"] = $this;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 
     /**
+     * Getter method to return private $lastUsed property which contains the last Character object.
+     * Also tries to update the property if it is null and if there are any characters for the user associated.
+     *
      * @return Character|null
+     * @access public
+     * @see User->setLastUsed()
      */
     public function getLastUsed()
     {
         if (is_null($this->lastUsed)) {
-            if (!is_null($this->getCharIDs())) {
+            if (!is_null($this->getCharObjectIDs())) {
                 try {
-                    $this->setLastUsed($this->charIDs[0]);
+                    $this->setLastUsed($this->charObjectIDs[0]);
                 } catch (Exception $e) {
                     return $this->lastUsed;
                 }
@@ -204,31 +294,39 @@ class User
     }
 
     /**
-     * @param string $cid
+     * Setter method to set private $role property and to update the document in db.user.
+     * If successful, also updates the user stored in $_SESSION or throws an exception otherwise.
+     *
+     * @param MongoDB\BSON\ObjectId $cid
      * @throws Exception
+     * @access public
      */
     public function setLastUsed($cid)
     {
-        try {
-            $char = new Character($cid);
-            $new_char = [
-                '$set' => [
-                    'lastUsed' => new MongoDB\BSON\ObjectId($char->getId())
-                ]
-            ];
-            $bulk = new MongoDB\Driver\BulkWrite();
-            $bulk -> update([ "_id" => new MongoDB\BSON\ObjectId($this->id)], $new_char);
-            $char->getId();
-            bulkWriteOperation("pnp.user", $bulk);
-            $this->lastUsed = $char;
-            $_SESSION["user"] = $this;
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+        if ($this->isCharacterFromUser($cid->serialize())) {
+            try {
+                $char = new Character($cid);
+                $new_char = [
+                    '$set' => [
+                        'lastUsed' => $char->getId()
+                    ]
+                ];
+                bulkUpdateOneByID(self::DBNAMESPACE, $this->id, $new_char);
+                $this->lastUsed = $char;
+                $_SESSION["user"] = $this;
+            } catch (Exception $e) {
+                throw new Exception($e->getMessage());
+            }
+        } else {
+            throw new Exception("Character is not associated with user.");
         }
     }
 
     /**
+     * Getter method to get private $pwd property.
+     *
      * @return stdClass
+     * @access public
      */
     public function getPwd()
     {
@@ -236,8 +334,12 @@ class User
     }
 
     /**
+     * Setter method to set private $role property and to update the document in db.user.
+     * If successful, also updates the user stored in $_SESSION or throws an exception otherwise.
+     *
      * @param array $pwd
      * @throws Exception
+     * @access public
      */
     public function setPwd($pwd)
     {
@@ -246,10 +348,8 @@ class User
                 'pwd' => $pwd
             ]
         ];
-        $bulk = new MongoDB\Driver\BulkWrite();
-        $bulk->update(['_id' => new MongoDB\BSON\ObjectId($this->id)], $new_pw);
         try {
-            bulkWriteOperation("pnp.user", $bulk);
+            bulkUpdateOneByID(self::DBNAMESPACE, $this->id, $new_pw);
             $this->pwd = $pwd;
             $_SESSION["user"] = $this;
         } catch (Exception $e) {
@@ -258,7 +358,11 @@ class User
     }
 
     /**
+     * Getter method to get private $name property.
+     * No setter method because the name of a user should no be changeable.
+     *
      * @return string
+     * @access public
      */
     public function getName()
     {
@@ -266,7 +370,11 @@ class User
     }
 
     /**
-     * @return string
+     * Getter method to get private $name property.
+     * No setter method because the name of a user should no be changeable.
+     *
+     * @return MongoDB\BSON\ObjectId
+     * @access public
      */
     public function getId()
     {

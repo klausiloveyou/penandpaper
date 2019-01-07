@@ -1,9 +1,8 @@
 <?php
-/*
- * Created by IntelliJ IDEA.
- * User: felix.reinhardt
- * Date: 2018-12-12
- * Time: 16:14
+/**
+ * Short description
+ *
+ * @author  Felix Reinhardt <klausiloveyou@gmail.com>
  */
 
 /**

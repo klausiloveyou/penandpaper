@@ -45,7 +45,7 @@ if (!empty($_POST)) {
         if ($vi) {
             if (strlen($name) < 3) {
                 $field = "name";
-                $feedback = "User name must be 3 characters at least.";
+                $feedback = "User name has less than 3 characters.";
             } else {
                 try {
                     $user::create($name, $new);
@@ -89,8 +89,11 @@ if (!empty($_POST)) {
         <h1>Create new user</h1>
         <form class="form-signin" method="post">
             <div class="form-label-group">
-                <input type="text" name="name" id="inputName" class="form-control<?php if ($field === "name") {echo " is-invalid";} ?>" placeholder="User name" required autofocus>
+                <input type="text" name="name" id="inputName" class="form-control<?php if ($field === "name") {echo " is-invalid";} ?>" placeholder="User name" aria-describedby="passwordHelpBlock" required autofocus>
                 <label for="inputName">User name</label>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                    User name must be at least 3 characters long.
+                </small>
                 <div class="invalid-feedback">
                     <?php echo $feedback; ?>
                 </div>
@@ -99,16 +102,22 @@ if (!empty($_POST)) {
             <hr class="mb-4">
 
             <div class="form-label-group">
-                <input type="password" name="new" id="inputNewPassword" class="form-control<?php if ($field === "pw") {echo " is-invalid";} ?>" placeholder="Enter new password" required>
+                <input type="password" name="new" id="inputNewPassword" class="form-control<?php if ($field === "pw") {echo " is-invalid";} ?>" placeholder="Enter new password" aria-describedby="passwordHelpBlock" required>
                 <label for="inputNewPassword">Enter temporary password</label>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                    Password must be at least 6 characters long.
+                </small>
                 <div class="invalid-feedback">
                     <?php echo $feedback; ?>
                 </div>
             </div>
 
             <div class="form-label-group">
-                <input type="password" name="conf" id="inputConfPassword" class="form-control<?php if ($field === "pw") {echo " is-invalid";} ?>" placeholder="Confirm new password" required>
+                <input type="password" name="conf" id="inputConfPassword" class="form-control<?php if ($field === "pw") {echo " is-invalid";} ?>" placeholder="Confirm new password" aria-describedby="passwordHelpBlock" required>
                 <label for="inputConfPassword">Confirm temporary password</label>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                    Password confirmation must match temporary password.
+                </small>
                 <div class="invalid-feedback">
                     <?php echo $feedback; ?>
                 </div>

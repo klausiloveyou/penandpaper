@@ -24,6 +24,24 @@ body.main {
     text-align: center;
 }
 
+.btn-group.fullwidth {
+    display: flex;
+}
+
+.fullwidth .btn {
+    flex: 1
+}
+
+button#create {
+    background-color: saddlebrown;
+    border-color: transparent;
+}
+
+button#cancel {
+    background-color: brown;
+    border-color: transparent;
+}
+
 button#sign-in {
     background-color: saddlebrown;
     border-color: saddlebrown;

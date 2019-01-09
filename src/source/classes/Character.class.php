@@ -14,7 +14,25 @@ require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/User.class.php";
  *  {
  *      "_id": "objectId",
  *      "user_id": "objectId",
- *      "name": "string"
+ *      "profile": {
+ *          "name": "string",
+ *          "race": "string",
+ *          "career": "array",
+ *          "age": "string",
+ *          "gender": "string",
+ *          "eyecolor": "string",
+ *          "haircolor": "string",
+ *          "height": "string",
+ *          "weight": "string",
+ *          "starsign": "string",
+ *          "numberofsiblings": "string",
+ *          "birthplace": "string",
+ *          "distinguishingmarks": "string",
+ *          "mainstarting": "array",
+ *          "mainadvance": "array",
+ *          "maincurrent": "array"
+ *      },
+ *      ""
  *  }
  *
  */
@@ -26,8 +44,8 @@ class Character
     private $id;
     /** @var MongoDB\BSON\ObjectId $uid */
     private $uid;
-    /** @var string $name */
-    private $name;
+    /** @var stdClass $profile */
+    private $profile;
 
     /**
      * Character constructor.
@@ -46,7 +64,7 @@ class Character
             } else {
                 $this->id = $char->_id;
                 $this->uid = $char->uid;
-                $this->name = $char->name;
+                $this->profile = $char->profile;
             }
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
@@ -76,26 +94,26 @@ class Character
     /**
      * Getter method to return private $name property.
      *
-     * @return string
+     * @return stdClass
      * @access public
      */
-    public function getName()
+    public function getProfile()
     {
-        return $this->name;
+        return $this->profile;
     }
 
     /**
      * Setter method to set private $name property.
      * Also updates document in collection db.char for: "name": "string"
      *
-     * @param string $name
+     * @param stdClass $newprofile
      * @access public
      *
      * @todo Implement DB update
      */
-    public function setName($name)
+    public function setProfile($newprofile)
     {
-        $this->name = $name;
+        $this->profile = $newprofile;
     }
 
     /**

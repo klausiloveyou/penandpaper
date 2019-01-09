@@ -220,7 +220,7 @@ class User
     public function refreshCharObjectIDs()
     {
         $query = ['user' => $this->id];
-        $options = [];
+        $options = [ 'projection' => ['_id' => 1] ];
         try {
             $chars = queryDocument(Character::DBNAMESPACE, $query, $options);
             if (is_null($chars)) {

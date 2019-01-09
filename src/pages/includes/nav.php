@@ -19,23 +19,30 @@ $lastUsed = $user->getLastUsed();
         <!-- Menu items for active character -->
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="#">Home </a>
-            </li>
-            <!--
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
+                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=profile">Profile </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
+                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=armory">Armory </a>
             </li>
-            -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=skills">Skills </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=talents">Talents </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=belongings">Belongings </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=spells">Spells </a>
+            </li>
         </ul>
         <ul class="navbar-nav">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo strtoupper($user->getName()); ?></a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
                     <?php include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/admindropdownitems.php"; ?>
-                    <a class="dropdown-item" href="#">New Character...</a>
+                    <a class="dropdown-item" href="/pages/newcharacter.php">New Character...</a>
                     <div class="dropdown-divider"></div>
                     <?php include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/chardropdownitems.php"; ?>
                     <a class="dropdown-item" href="/pages/changepw.php">Change Password</a>

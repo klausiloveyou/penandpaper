@@ -2,13 +2,6 @@
 /**
  * @author  Felix Reinhardt <klausiloveyou@gmail.com>
  */
-
-/** @var Character $char */
-if (isset($char) && !is_null($char)) {
-    $newchar = false;
-} else {
-    $newchar = true;
-}
 ?>
 
 <fieldset id="profile">
@@ -104,7 +97,7 @@ if (isset($char) && !is_null($char)) {
             <div class="collapse" id="collapseCharacterProfile" data-parent="#charGroup3">
                 <div class="container">
                     <div class="row">
-                        <div class="col-3">Main</div>
+                        <div class="col-3 text-center">Main</div>
                         <div class="col">WS</div>
                         <div class="col">BS</div>
                         <div class="col">S</div>
@@ -153,6 +146,58 @@ if (isset($char) && !is_null($char)) {
                     <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="maincurrent">
                     <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="maincurrent">
                     <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="maincurrent">
+                </div>
+                <div class="container">
+                    <div class="row pt-3">
+                        <div class="col-3 text-center">Secondary</div>
+                        <div class="col text-center">A</div>
+                        <div class="col text-center">W</div>
+                        <div class="col text-center">SB</div>
+                        <div class="col text-center">TB</div>
+                        <div class="col text-center">M</div>
+                        <div class="col text-center">Mag</div>
+                        <div class="col text-center">IP</div>
+                        <div class="col text-center">FP</div>
+                    </div>
+                </div>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend w-25">
+                        <span class="input-group-text border-bottom-0 rounded-0 w-100" id="secstarting">Starting</span>
+                    </div>
+                    <input type="text" class="form-control form-control-sm border-bottom-0 rounded-0" aria-label="Starting" aria-describedby="secstarting">
+                    <input type="text" class="form-control form-control-sm border-bottom-0 rounded-0" aria-label="Starting" aria-describedby="secstarting">
+                    <input type="text" class="form-control form-control-sm border-bottom-0 rounded-0" aria-label="Starting" aria-describedby="secstarting">
+                    <input type="text" class="form-control form-control-sm border-bottom-0 rounded-0" aria-label="Starting" aria-describedby="secstarting">
+                    <input type="text" class="form-control form-control-sm border-bottom-0 rounded-0" aria-label="Starting" aria-describedby="secstarting">
+                    <input type="text" class="form-control form-control-sm border-bottom-0 rounded-0" aria-label="Starting" aria-describedby="secstarting">
+                    <input type="text" class="form-control form-control-sm border-bottom-0 rounded-0" aria-label="Starting" aria-describedby="secstarting">
+                    <input type="text" class="form-control form-control-sm border-bottom-0 rounded-0" aria-label="Starting" aria-describedby="secstarting">
+                </div>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend w-25">
+                        <span class="input-group-text border-bottom-0 rounded-0 w-100" id="secadvance">Advance</span>
+                    </div>
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
+                </div>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend w-25">
+                        <span class="input-group-text rounded-0 w-100" id="seccurrent">Current</span>
+                    </div>
+                    <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="seccurrent">
+                    <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="seccurrent">
+                    <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="seccurrent">
+                    <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="seccurrent">
+                    <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="seccurrent">
+                    <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="seccurrent">
+                    <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="seccurrent">
+                    <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="seccurrent">
                 </div>
             </div>
         </div>

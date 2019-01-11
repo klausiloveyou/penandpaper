@@ -37,6 +37,11 @@ button#create {
     border-color: transparent;
 }
 
+button#update {
+    background-color: saddlebrown;
+    border-color: transparent;
+}
+
 button#cancel {
     background-color: brown;
     border-color: transparent;

@@ -26,12 +26,21 @@ function queryDocument($namespace, $query, $options = [ "limit" => 1 ])
     } catch (\MongoDB\Driver\Exception\Exception $e) {
         throw new Exception($e->getMessage());
     }
-    return (count($r) > 0) ? $r : null;
+    if (count($r) > 0) {
+        foreach ($r as $o) {
+            $oa = (array) $o;
+            if (!empty($oa)) {
+                return $r;
+            }
+        }
+    }
+    return null;
 }
 
 /**
  * @param string $namespace
  * @param MongoDB\Driver\BulkWrite $bulk
+ * @return MongoDB\Driver\WriteResult
  * @throws Exception
  */
 function bulkWriteOperation($namespace, $bulk)
@@ -41,7 +50,7 @@ function bulkWriteOperation($namespace, $bulk)
         throw new Exception("Something is wrong with the DB connection, check logs.");
     }
     try {
-        $manager->executeBulkWrite($namespace, $bulk);
+        return $manager->executeBulkWrite($namespace, $bulk);
     } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
         throw new Exception($e->getMessage());
     }
@@ -51,6 +60,7 @@ function bulkWriteOperation($namespace, $bulk)
  * @param string $namespace
  * @param MongoDB\BSON\ObjectId $id
  * @param array|object $update
+ * @return MongoDB\Driver\WriteResult
  * @throws Exception
  */
 function bulkUpdateOneByID($namespace, $id, $update)
@@ -58,7 +68,7 @@ function bulkUpdateOneByID($namespace, $id, $update)
     $bulk = new MongoDB\Driver\BulkWrite();
     $bulk->update(['_id' => $id], $update);
     try {
-        bulkWriteOperation($namespace, $bulk);
+        return bulkWriteOperation($namespace, $bulk);
     } catch (Exception $e) {
         throw new Exception($e->getMessage());
     }
@@ -67,6 +77,7 @@ function bulkUpdateOneByID($namespace, $id, $update)
 /**
  * @param string $namespace
  * @param array|object $document
+ * @return MongoDB\Driver\WriteResult
  * @throws Exception
  */
 function bulkInsertOne($namespace, $document)
@@ -74,7 +85,7 @@ function bulkInsertOne($namespace, $document)
     $bulk = new MongoDB\Driver\BulkWrite();
     $bulk->insert($document);
     try {
-        bulkWriteOperation($namespace, $bulk);
+        return bulkWriteOperation($namespace, $bulk);
     } catch (Exception $e) {
         throw new Exception($e->getMessage());
     }

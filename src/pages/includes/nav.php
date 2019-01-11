@@ -9,7 +9,7 @@ $lastUsed = $user->getLastUsed();
 ?>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="/pages/characters.php"><?php echo (is_null($lastUsed)) ? "No Character" : $lastUsed->getName(); ?></a>
+    <a class="navbar-brand" href="/pages/characters.php"><?php echo (is_null($lastUsed)) ? "No Character" : $lastUsed->getProfile()->name; ?></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -19,22 +19,22 @@ $lastUsed = $user->getLastUsed();
         <!-- Menu items for active character -->
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=profile">Profile </a>
+                <a class="nav-link <?php echo ($_GET["p"] === "profile") ? "active " : ""; echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=profile">Profile </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=armory">Armory </a>
+                <a class="nav-link <?php echo ($_GET["p"] === "armory") ? "active " : ""; echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=armory">Armory </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=skills">Skills </a>
+                <a class="nav-link <?php echo ($_GET["p"] === "skills") ? "active " : ""; echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=skills">Skills </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=talents">Talents </a>
+                <a class="nav-link <?php echo ($_GET["p"] === "talents") ? "active " : ""; echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=talents">Talents </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=belongings">Belongings </a>
+                <a class="nav-link <?php echo ($_GET["p"] === "belongings") ? "active " : ""; echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=belongings">Belongings </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=spells">Spells </a>
+                <a class="nav-link <?php echo ($_GET["p"] === "spells") ? "active " : ""; echo (is_null($lastUsed)) ? "disabled" : ""; ?>" href="/pages/characters.php?p=spells">Spells </a>
             </li>
         </ul>
         <ul class="navbar-nav">

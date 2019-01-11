@@ -219,7 +219,7 @@ class User
      */
     public function refreshCharObjectIDs()
     {
-        $query = ['user' => $this->id];
+        $query = ['user_id' => $this->id];
         $options = [ 'projection' => ['_id' => 1] ];
         try {
             $chars = queryDocument(Character::DBNAMESPACE, $query, $options);

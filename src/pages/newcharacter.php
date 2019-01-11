@@ -20,8 +20,6 @@ if ($user->getPwd()->temp) {
     header("Location: changepw.php");
     exit();
 }
-
-$char = null;
 ?>
 
 <!doctype html>
@@ -50,7 +48,7 @@ $char = null;
     <form class="api">
         <?php include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/character/profile.php"; ?>
         <div class="container btn-group fullwidth" role="group">
-            <button class="btn btn-lg btn-primary mr-1 rounded-right" id="create">Create</button>
+            <button class="btn btn-lg btn-primary mr-1 rounded-right operation" id="create">Create</button>
             <button class="btn btn-lg btn-primary ml-1 rounded-left" id="cancel">Cancel</button>
         </div>
     </form>
@@ -74,3 +72,4 @@ $char = null;
     }
 </script>
 </body>
+</html>

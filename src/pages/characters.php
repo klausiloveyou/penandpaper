@@ -22,6 +22,13 @@ if ($user->getPwd()->temp) {
 }
 
 $lastUsed = $user->getLastUsed();
+
+if (isset($_GET["p"])) {
+    if (!property_exists($lastUsed, $_GET["p"])) {
+        header("Location: characters.php");
+        exit();
+    }
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -54,5 +61,17 @@ $lastUsed = $user->getLastUsed();
 
 <!-- Bootstrap Bundle JavaScript -->
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- PNP JS -->
+<script src="../dist/js/pnp.js" type="text/javascript"></script>
+
+<!-- Init PNP JS -->
+<script>
+    if (window.pnp) {
+        $(document).ready(function() {
+            pnp.character.init();
+        });
+    }
+</script>
 </body>
 </html>

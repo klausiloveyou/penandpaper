@@ -18,11 +18,14 @@ $chars = $user->getCharObjectIDs();
         <?php
         try {
             $co = new Character($c);
+            if ($co->getID()->__toString() === $user->getLastUsed()->getID()->__toString()) {
+                continue;
+            }
         } catch (Exception $e) {
             continue;
         }
         ?>
-        <a class="dropdown-item" href="/pages/util/changecharacter.php?c=<?php echo $co->getID()->serialize(); ?>"><?php echo $co->getName(); ?></a>
+        <a class="dropdown-item" href="/pages/util/changecharacter.php?c=<?php echo $co->getID()->__toString(); ?>"><?php echo $co->getProfile()->name; ?></a>
     <?php endforeach; ?>
     <div class="dropdown-divider"></div>
 <?php endif; ?>

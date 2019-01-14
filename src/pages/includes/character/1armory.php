@@ -4,17 +4,17 @@
  */
 ?>
 
-<fieldset id="profile">
+<fieldset id="armory">
     <div class="container">
 
         <div class="pb-3" id="charGroup1">
-            <p><a data-toggle="collapse" href="#collapseCharacter" role="button" aria-expanded="false" aria-controls="collapseCharacter"><h3>Character</h3></a></p>
-            <div class="collapse" id="collapseCharacter" data-parent="#charGroup1">
+            <p><a class="black" data-toggle="collapse" href="#collapseCharacter" role="button" aria-expanded="false" aria-controls="collapseCharacter"><h3>Character</h3></a></p>
+            <div class="collapse show" id="collapseCharacter" data-parent="#charGroup1">
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text border-bottom-0 rounded-0" id="name">Name</span>
                     </div>
-                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Name" aria-describedby="name">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" required aria-label="Name" aria-describedby="name">
                 </div>
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -28,15 +28,15 @@
                     </div>
                     <input type="text" class="form-control rounded-0" aria-label="Career #1" aria-describedby="career1">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary rounded-0" type="button">Add</button>
+                        <button class="btn btn-secondary rounded-0" type="button">Add</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="pb-3" id="charGroup2">
-            <p><a data-toggle="collapse" href="#collapsePersonalDetails" role="button" aria-expanded="false" aria-controls="collapsePersonalDetails"><h3>Personal Details</h3></a></p>
-            <div class="collapse" id="collapsePersonalDetails" data-parent="#charGroup2">
+            <p><a class="black" data-toggle="collapse" href="#collapsePersonalDetails" role="button" aria-expanded="false" aria-controls="collapsePersonalDetails"><h3>Personal Details</h3></a></p>
+            <div class="collapse show" id="collapsePersonalDetails" data-parent="#charGroup2">
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text border-bottom-0 rounded-0" id="age">Age</span>
@@ -93,9 +93,9 @@
         </div>
 
         <div class="pb-3" id="charGroup3">
-            <p><a data-toggle="collapse" href="#collapseCharacterProfile" role="button" aria-expanded="false" aria-controls="collapseCharacterProfile"><h3>Character Profile</h3></a></p>
-            <div class="collapse" id="collapseCharacterProfile" data-parent="#charGroup3">
-                <div class="container">
+            <p><a class="black" data-toggle="collapse" href="#collapseCharacterProfile" role="button" aria-expanded="false" aria-controls="collapseCharacterProfile"><h3>Character Profile</h3></a></p>
+            <div class="collapse show" id="collapseCharacterProfile" data-parent="#charGroup3">
+                <div class="header">
                     <div class="row">
                         <div class="col-3 text-center">Main</div>
                         <div class="col">WS</div>
@@ -147,17 +147,17 @@
                     <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="maincurrent">
                     <input type="text" class="form-control rounded-0" aria-label="Current" aria-describedby="maincurrent">
                 </div>
-                <div class="container">
+                <div class="header">
                     <div class="row pt-3">
                         <div class="col-3 text-center">Secondary</div>
-                        <div class="col text-center">A</div>
-                        <div class="col text-center">W</div>
-                        <div class="col text-center">SB</div>
-                        <div class="col text-center">TB</div>
-                        <div class="col text-center">M</div>
-                        <div class="col text-center">Mag</div>
-                        <div class="col text-center">IP</div>
-                        <div class="col text-center">FP</div>
+                        <div class="col">A</div>
+                        <div class="col">W</div>
+                        <div class="col">SB</div>
+                        <div class="col">TB</div>
+                        <div class="col">M</div>
+                        <div class="col">Mag</div>
+                        <div class="col">IP</div>
+                        <div class="col">FP</div>
                     </div>
                 </div>
                 <div class="input-group input-group-sm">
@@ -179,12 +179,12 @@
                     </div>
                     <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
                     <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance" value="-">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance" value="-">
                     <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
                     <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
-                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
-                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
-                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
-                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance" value="-">
+                    <input type="text" class="form-control border-bottom-0 rounded-0" aria-label="Advance" aria-describedby="secadvance" value="-">
                 </div>
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend w-25">

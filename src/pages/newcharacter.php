@@ -46,7 +46,6 @@ if ($user->getPwd()->temp) {
 
 <main role="main" class="container">
     <form class="api">
-        <?php include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/character/profile.php"; ?>
         <div class="container btn-group fullwidth" role="group">
             <button class="btn btn-lg btn-primary mr-1 rounded-right operation" id="create">Create</button>
             <button class="btn btn-lg btn-primary ml-1 rounded-left" id="cancel">Cancel</button>
@@ -66,7 +65,7 @@ if ($user->getPwd()->temp) {
 <!-- Init PNP JS -->
 <script>
     if (window.pnp) {
-        $(document).ready(function() {
+        $(function() {
             pnp.character.init();
         });
     }

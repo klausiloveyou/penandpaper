@@ -5,6 +5,8 @@
 
 require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/User.class.php";
 require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/Character.class.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/Constants.class.php";
+
 
 /** @var User $user */
 $user = $_SESSION["user"];
@@ -19,8 +21,8 @@ if (isset($_GET["p"])) {
 
 <form class="api" data-what="<?php echo $what; ?>">
     <?php
-    if (isset($_GET["p"])) {
-        include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/character/".$_GET["p"].".php";
+    if ($what !== "*") {
+        include $_SERVER["DOCUMENT_ROOT"]."/pages/includes/character/".Constants::getIndexOfSubpage($what).$what.".php";
     } else {
         foreach (glob($_SERVER["DOCUMENT_ROOT"]."/pages/includes/character/*.php") as $filename)
         {

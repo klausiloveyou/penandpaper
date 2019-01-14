@@ -4,6 +4,7 @@
  */
 
 require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/User.class.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/Constants.class.php";
 
 session_start();
 
@@ -68,7 +69,7 @@ if (isset($_GET["p"])) {
 <!-- Init PNP JS -->
 <script>
     if (window.pnp) {
-        $(document).ready(function() {
+        $(function() {
             pnp.character.init();
         });
     }

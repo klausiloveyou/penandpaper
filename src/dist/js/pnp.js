@@ -67,6 +67,7 @@
         // Define public variables
         charObj : {},
         pageURLPram : "",
+        keyUpEvent : null,
 
         /**
          * Register and un-register events
@@ -86,7 +87,8 @@
             });
 
             $(document).on("click", "form.api button.operation", function (e) {
-                createOrUpdateCharacter(e);
+                pnp.character.keyUpEvent = null;
+                createOrUpdateCharacter(e.target);
             });
 
             $(document).on("click", "form fieldset div.input-group button", function (e) {
@@ -94,19 +96,32 @@
             });
 
             loadCharacterData();
+        },
+
+        registerInputListener : function () {
+            var inputs = $("form.api button.operation#update").closest("form.api").find("input");
+            $(inputs).off();
+            $(inputs).on("keyup", function (e) {
+                pnp.character.keyUpEvent = e;
+                setTimeout(function () {
+                    if (pnp.character.keyUpEvent === e) {
+                        var button = $(e.target).closest("form.api").find("button.operation#update");
+                        //createOrUpdateCharacter(button);
+                    }
+                }, 10000);
+            });
         }
     };
 
     function loadCharacterData () {
+        pnp.character.registerInputListener();
         if ($("form.api").length && $("form.api button#update").length) {
             var what = (pnp.character.pageURLPram) ? "?what=" + pnp.character.pageURLPram : "?what=*";
             $.get("api/character.php" + what, function (data) {
                 fillFormWithCharacterData($("form.api"), data);
-                console.log(data);
             })
                 .fail(function (data) {
-                    //Todo: Display error
-                    console.log(data);
+                    pnp.ui.addAlertToMain(data.responseText, "Error loading data", "danger");
                 });
         }
     }
@@ -145,19 +160,18 @@
     }
 
     /**
-     * @param {Event} event
+     * @param {EventTarget} target
      */
-    function createOrUpdateCharacter (event) {
-        var buttonJ = $(event.target);
+    function createOrUpdateCharacter (target) {
+        var buttonJ = $(target);
         var operation = buttonJ.attr("id");
         buildCharacterJSONFromForm(buttonJ.closest("form.api"), function () {
-            console.log(pnp.character.charObj);
             $.post("api/character.php", { chardata: JSON.stringify(pnp.character.charObj), operation: operation })
                 .done(function (){
                     if (operation === "create") {
                         window.location.href = "/pages/characters.php";
                     } else if (operation === "update") {
-
+                        pnp.ui.addAlertToMain("Your character data has been updated successfully.", "Saved", "info");
                     }
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
@@ -240,6 +254,34 @@
                 $(srcDIG).find("span").addClass("border-bottom-0");
                 $(input).addClass("border-bottom-0");
                 $(srcDIG).parent().append(copy);
+                pnp.character.registerInputListener();
+                $("form.api button.operation").click();
+            }
+        },
+
+        /**
+         * @name addAlertToMain
+         * @description Displays an alert to the main container of the page.
+         * @param {string} message
+         * @param {string} title
+         * @param {string} type
+         */
+        addAlertToMain : function (message, title, type) {
+            if (message) {
+                var ttl = (title) ? "<strong>"+title+"!</strong> " : "";
+                var tp = (type) ? type : "info";
+                var alert =     $("<div class=\"alert alert-" + tp + " alert-dismissible fade show\" role=\"alert\">\n" +
+                    "                " + ttl + message + "\n" +
+                    "                <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
+                    "                    <span aria-hidden=\"true\">&times;</span>\n" +
+                    "                </button>\n" +
+                    "            </div>");
+
+                $(alert).fadeTo(5000, 500).slideUp(500, function () {
+                    $(alert).slideUp(500);
+                });
+
+                $(alert).prependTo($("main"));
             }
         }
     };
@@ -266,9 +308,9 @@
                 if (!pnp.character.charObj[fieldset].hasOwnProperty(key)) {
                     pnp.character.charObj[fieldset][key] = [];
                 }
-                pnp.character.charObj[fieldset][key].splice(idx, 0, value);
+                pnp.character.charObj[fieldset][key].splice(idx, 0, $.trim(value.toString()));
             } else {
-                pnp.character.charObj[fieldset][key] = value;
+                pnp.character.charObj[fieldset][key] = $.trim(value.toString());
             }
         },
 
@@ -278,7 +320,7 @@
          * @param {string} query
          * @param {boolean} upperQuery
          */
-        urlQuery: function (query, upperQuery) {
+        urlQuery : function (query, upperQuery) {
             query = query.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
             var upper = (upperQuery === null) ? true : upperQuery;
             var expr = "[\\?&]" + query + "=([^&#]*)";

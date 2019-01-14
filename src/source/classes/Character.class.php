@@ -119,7 +119,7 @@ class Character
         $charName = $chardata->profile->name;
         try {
             if (!self::doesCharacterNameExistsForUser($uid, $charName)) {
-                $new_char = (object) array_merge( (array)$chardata, array( 'user_id' => $uid ) );
+                $new_char = (object) array_merge( (array) $chardata, array( 'user_id' => $uid ) );
                 bulkInsertOne(self::DBNAMESPACE, $new_char);
                 $query = ['user_id' => $uid, 'profile.name' => $charName ];
                 $options = [ 'projection' => [ '_id' => 1 ] ];
@@ -146,6 +146,9 @@ class Character
      */
     public static function doesCharacterNameExistsForUser($uid, $name)
     {
+        if (trim($name) == false) {
+            return true;
+        }
         $query = [
             'user_id' => $uid,
             'profile.name' => new MongoDB\BSON\Regex("^".$name."$", "i")
@@ -153,6 +156,32 @@ class Character
         try {
             $char = queryDocument(self::DBNAMESPACE, $query);
             return (is_null($char)) ? false : true;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * Public method to update the character with given data.
+     *
+     * @param stdClass $chardata
+     * @throws Exception
+     * @access public
+     */
+    public function update($chardata)
+    {
+        $new = [];
+        foreach ($chardata as $fieldset => $value) {
+            $new[$fieldset] = $value;
+        }
+        $update = [
+            '$set' => $new
+        ];
+        try {
+            bulkUpdateOneByID(self::DBNAMESPACE, $this->id, $update);
+            /** @var User $user */
+            $user = $_SESSION["user"];
+            $user->setLastUsed($this->id);
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }

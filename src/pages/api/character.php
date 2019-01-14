@@ -30,6 +30,7 @@ if (!empty($_POST) && !empty($_GET)) {
 if (!empty($_POST)) {
     if (isset($_POST["chardata"]) && isset($_POST["operation"])) {
         $operation = $_POST["operation"];
+        /** @var stdClass $chardata */
         $chardata = json_decode($_POST["chardata"]);
         if ($operation === "create") {
             try {
@@ -41,7 +42,13 @@ if (!empty($_POST)) {
                 exit();
             }
         } else if ($operation === "update") {
-
+            try {
+                $lastUsed->update($chardata);
+            } catch (Exception $e) {
+                header("HTTP/1.1 400 Bad Request");
+                echo $e->getMessage();
+                exit();
+            }
         } else {
             header("HTTP/1.1 400 Bad Request");
             echo "The operation you provided is not valid.";

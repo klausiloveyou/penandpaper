@@ -8,6 +8,14 @@
     font-style: normal;
 }
 
+div.header div.col {
+    font-size: smaller;
+}
+
+a.black {
+    color: black;
+}
+
 html,
 body {
     height: 100%;
@@ -17,6 +25,10 @@ body {
 
 body.main {
     padding-top: 5rem;
+}
+
+.container {
+    padding-bottom: 15px;
 }
 
 .starter-template {

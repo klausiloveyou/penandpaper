@@ -49,26 +49,27 @@ if (!empty($_POST)) {
 </head>
 
 <body class="login">
-
-<form class="form-signin" method="post">
-    <div class="form-label-group">
-        <input type="text" name="user" id="inputName" class="form-control<?php if ($error === "user") {echo " is-invalid";} ?>" placeholder="User name" required autofocus>
-        <label for="inputName">User Name</label>
-        <div class="invalid-feedback">
-            User name doesn't exist!
+<main role="main" class="container">
+    <form class="form-signin" method="post">
+        <div class="form-label-group">
+            <input type="text" name="user" id="inputName" class="form-control<?php if ($error === "user") {echo " is-invalid";} ?>" placeholder="User name" required autofocus>
+            <label for="inputName">User Name</label>
+            <div class="invalid-feedback">
+                User name doesn't exist!
+            </div>
         </div>
-    </div>
 
-    <div class="form-label-group">
-        <input type="password" name="pw" id="inputPassword" class="form-control<?php if ($error=== "pw") {echo " is-invalid";} ?>" placeholder="Password" required>
-        <label for="inputPassword">Password</label>
-        <div class="invalid-feedback">
-            Wrong password!
+        <div class="form-label-group">
+            <input type="password" name="pw" id="inputPassword" class="form-control<?php if ($error=== "pw") {echo " is-invalid";} ?>" placeholder="Password" required>
+            <label for="inputPassword">Password</label>
+            <div class="invalid-feedback">
+                Wrong password!
+            </div>
         </div>
-    </div>
 
-    <button class="btn btn-lg btn-primary btn-block" id="sign-in" type="submit">Sign in</button>
-</form>
+        <button class="btn btn-lg btn-primary btn-block" id="sign-in" type="submit">Sign in</button>
+    </form>
+</main>
 
 <!-- jQuery -->
 <script src="vendor/jquery/jquery-3.3.1.min.js"></script>

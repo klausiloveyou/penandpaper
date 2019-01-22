@@ -41,7 +41,7 @@ require_once $_SERVER["DOCUMENT_ROOT"]."/source/classes/User.class.php";
  *      },
  *      "talents": {
  *      },
- *      "belongins": {
+ *      "belongings": {
  *      },
  *      "spells": {
  *      }

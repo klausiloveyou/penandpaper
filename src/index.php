@@ -45,7 +45,7 @@ if (!empty($_POST)) {
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="dist/css/pnp.css" rel="stylesheet">
+    <link href="dist/css/pnp.min.css" rel="stylesheet">
 </head>
 
 <body class="login">

@@ -51,7 +51,7 @@
     }
 
     /*
-     * Execute initialization method for pnp.js
+     * Execute initialization method for pnp.min.js
      */
     init();
 

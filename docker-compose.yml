@@ -1,7 +1,5 @@
-# ./dev.yml
-#
 # Desc:   YAML file to describe development environment with docker-compose
-# Usage:  docker-compose -f dev.yml up -d
+# Usage:  docker-compose up -d
 
 version: "3"
 
